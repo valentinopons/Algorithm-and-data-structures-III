@@ -5,22 +5,28 @@
 #include <algorithm>
 #include <string>
 
-// funciones para ordenar primero por nombre, luego por defensa y por ultimo por ataque:
-bool ordenar_por_nombre(std::tuple<std::string, int, int> jugador_1 , std::tuple<std::string, int, int> jugador_2){
-    return std::get<0>(jugador_1) < std::get<0>(jugador_2);
+// funcion para ordenar primero por ataque, luego por defensa y por ultimo por nombre:
+
+bool comparar_jugadores(const std::tuple<std::string, int, int>& jugador_1, const std::tuple<std::string, int, int>& jugador_2) {
+    // Comparar por ataque
+    if (std::get<1>(jugador_1) != std::get<1>(jugador_2)) {
+        return std::get<1>(jugador_1) > std::get<1>(jugador_2);
+    }
+    // Comparar por defensa
+    else if (std::get<2>(jugador_1) != std::get<2>(jugador_2)) {
+        return std::get<2>(jugador_1) < std::get<2>(jugador_2);
+    }
+    // Comparar por nombre
+    else {
+        return std::get<0>(jugador_1) < std::get<0>(jugador_2);
+    }
 }
-bool ordenar_por_defensa(std::tuple<std::string, int, int> jugador_1 , std::tuple<std::string, int, int> jugador_2){
-    return std::get<2>(jugador_1) > std::get<2>(jugador_2);
-}
-bool ordenar_por_ataque(std::tuple<std::string, int, int> jugador_1 , std::tuple<std::string, int, int> jugador_2){
-    return std::get<1>(jugador_1) > std::get<1>(jugador_2);
+void ordenar(std::vector<std::tuple<std::string, int, int>>& jugadores){
+    std::stable_sort(jugadores.begin() , jugadores.end() , comparar_jugadores);
+         
 }
 
-void ordenar(std::vector<std::tuple<std::string, int, int>>& jugadores){
-    std::stable_sort(jugadores.begin() , jugadores.end() , ordenar_por_nombre);
-    std::stable_sort(jugadores.begin() , jugadores.end() , ordenar_por_defensa);
-    std::stable_sort(jugadores.begin() , jugadores.end() , ordenar_por_ataque);      
-}
+
 
 void imprimir_soluciones(std::vector<std::vector<std::string>> atacantes_defensores , int casos){
         int c = 1;
@@ -52,6 +58,7 @@ void imprimir_soluciones(std::vector<std::vector<std::string>> atacantes_defenso
     
 }
 
+
 int main() {
     int casos;
     std::string nombre;
@@ -61,7 +68,7 @@ int main() {
     
     std::cin >> casos;
     std::cin.ignore(); // Descartar el salto de línea después de leer 'casos'
-    std::vector<std::vector<std::tuple<std::string, int, int>>>lista_jugadores;
+    std::vector<std::vector<std::tuple<std::string, int, int>>>lista_equipos;
     std::vector<std::vector<std::string>> atacantes_defensores;
     
     for (int c = 0; c < casos; c++) {
@@ -72,28 +79,28 @@ int main() {
             lista.push_back(std::make_tuple(nombre, ataque, defensa));
 
         }
-        lista_jugadores.push_back(lista);  
+        lista_equipos.push_back(lista);  
         
     }
 
-    for (auto& vec : lista_jugadores) {
+    for (auto& vec : lista_equipos) { //ordeno a todos los jugadores acorde a ataque nombre defensa de todos los equipos en la  lista
     ordenar(vec);
     }
-    for (int i = 0; i < casos; i++){
+    for (int i = 0; i < casos; i++){ // este ciclo para cada equipo crea un lista de atacantes y una lista de defensores y las agrega a atacantes_defensores
         std::vector<std::string> atacantes(5);
         std::vector<std::string> defensores(5);
         for (int j = 0; j < 5; j++){
-            atacantes[j] = std::get<0>(lista_jugadores[i][j]);
+            atacantes[j] = std::get<0>(lista_equipos[i][j]);
         }
         for (int j = 0; j < 5; j++){
-            defensores[j] = std::get<0>(lista_jugadores[i][j+5]);
+            defensores[j] = std::get<0>(lista_equipos[i][j+5]);
         }
         atacantes_defensores.push_back(atacantes);
-        atacantes_defensores.push_back(defensores);
+        atacantes_defensores.push_back(defensores); //cada par de vectores dentro de atacantes_defensores corresponde a los atacantes y defensores de un equipo en concreto.
         
     }
-     for(int i = 0 ; i< atacantes_defensores.size() ; i++){
-        std::stable_sort(atacantes_defensores[i].begin() , atacantes_defensores[i].end());   
+     for(int i = 0 ; i< atacantes_defensores.size() ; i++){ //ordeno por ultimo cada lista de atacantes y de defensores de mayor a menor.
+        std::stable_sort(atacantes_defensores[i].begin() , atacantes_defensores[i].end());  
      }
 
     imprimir_soluciones(atacantes_defensores , casos);
