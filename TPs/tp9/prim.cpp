@@ -174,4 +174,10 @@ int main() {
     }
 }
 
-
+for (int i = 0; i < res.size(); i++){
+        if(res[i] == numeric_limits<int>::max() ){
+            cout << "IMPOSSIBLE" <<endl;
+        }else{
+            cout<<res[i];
+        }
+    }
