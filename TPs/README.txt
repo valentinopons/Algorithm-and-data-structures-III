@@ -1,2 +1,2 @@
-The folders contain competitive programing problems.They were resolved with c++;
-See the problem description or website to understand the input
+The folders contain competitive programing problems.They were solved using c++;
+See the problems description or website to understand the input
